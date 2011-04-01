@@ -2,8 +2,8 @@ require File.expand_path('../lib/openid_registrable/version', __FILE__)
 
 Gem::Specification.new do |s|
   s.name = "openid_registrable"
-  s.summary = "Adds to model method for defining required and optional fields for registration via OpenID."
-  s.description = "Gem makes possible define required and optional fields for registration via OpenID and to map them to fields of your model."
+  s.summary = "Adds to ActiveRecord model method for defining required and optional fields for registration via OpenID."
+  s.description = "OpenidRegistrable is gem for Rails. It makes possible define required and optional fields for registration via OpenID and to map them to fields of your model."
   s.authors = ['Vít Krchov']
   s.email = 'vit.krchov@gmail.com'
   s.homepage = 'https://github.com/vita/openid_registrable'

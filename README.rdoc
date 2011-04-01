@@ -1,3 +1,52 @@
 = OpenidRegistrable
 
-This project rocks and uses MIT-LICENSE.
+OpenidRegistrable is gem for Rails. It makes possible define required and optional fields for registration via OpenID and to map them to fields of your model.
+
+== Usage
+
+ class User < ActiveRecord::Base
+   openid_registrable :required_fields => {
+       :email => 'http://axschema.org/contact/email',
+     },
+     :optional_fields => {
+       :first_name => 'http://axschema.org/namePerson/first',
+       :last_name => 'http://axschema.org/namePerson/last',
+     }
+ end
+
+ User.openid_required_fields => ['http://axschema.org/contact/email']
+ User.openid_optional_fields => ['http://axschema.org/namePerson/first', 'http://axschema.org/namePerson/last']
+
+ User.openid_fields_to_model_fields_mapping =>
+
+ {:email => 'http://axschema.org/contact/email'
+  :first_name => 'http://axschema.org/namePerson/first',
+  :last_name => 'http://axschema.org/namePerson/last'
+ }
+
+ # assign fields
+ @user = User.new
+ @user.assign_openid_fields(openid_ax_data)
+ @user.save
+
+=== Usage with open_id_authentication
+https://github.com/Velir/open_id_authentication
+
+ authenticate_with_open_id(@openid_identifier, :required => User.openid_required_fields, :optional => User.openid_optional_fields) do |result, identity_url, sreg_data, ax_data|
+   if result.successful?
+     if self.current_user = User.find_by_identity_url(identity_url)
+       current_user.assign_openid_fields(ax_data, [:username])
+
+       current_user.changes.empty? ? successful_login : successful_login(edit_user_path(:user => current_user.attributes))
+     else
+       self.current_user = User.new(:identity_url => identity_url)
+       current_user.assign_openid_fields(ax_data)
+
+       successful_login(registration_via_openid_path(:user => current_user.attributes))
+     end
+   else
+     failed_login result.message
+   end
+ end
+
+Copyright (c) 2011 Vít Krchov, KRAXNET s.r.o., released under the MIT license
